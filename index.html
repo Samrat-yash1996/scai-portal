@@ -162,6 +162,43 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 
 /* UTIL */
 .pb{padding-bottom:32px;}
+
+/* MARKET PAGE */
+.mkt-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:18px;margin-bottom:14px;}
+.mkt-hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
+.mkt-hero-h{font-family:'Fraunces',serif;font-size:20px;font-weight:600;line-height:1.2;color:var(--text);margin-bottom:6px;}
+.mkt-hero-p{font-size:12px;color:var(--text2);line-height:1.6;}
+.mkt-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.mkt-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;}
+.mkt-stat-n{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;color:var(--teal);line-height:1;}
+.mkt-stat-l{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.4;}
+.mkt-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px;margin-bottom:10px;}
+.mkt-card-h{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.mkt-card-h .ic{font-size:14px;}
+.mkt-card p{font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px;}
+.mkt-card p:last-child{margin-bottom:0;}
+.mkt-list{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.mkt-li{font-size:12px;color:var(--text2);line-height:1.55;padding-left:16px;position:relative;}
+.mkt-li::before{content:'▸';position:absolute;left:0;color:var(--amber);font-size:10px;top:2px;}
+.mkt-li strong{color:var(--text);font-weight:500;}
+.model-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+.model-row:last-child{border-bottom:none;}
+.model-name{font-size:12px;font-weight:500;color:var(--text);}
+.model-use{font-size:10px;color:var(--text3);margin-top:1px;}
+.model-tag{font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-left:8px;}
+.skill-bar-row{margin-bottom:11px;}
+.skill-bar-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+.skill-bar-name{color:var(--text);font-weight:500;}
+.skill-bar-pct{color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.skill-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.skill-bar-fill{height:100%;border-radius:3px;}
+.job-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:9px;}
+.job-title{font-size:13px;font-weight:600;color:var(--text);}
+.job-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.job-skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.job-skill{font-size:9px;padding:2px 7px;border-radius:4px;background:var(--bg4);color:var(--text2);}
+.mkt-source{font-size:10px;color:var(--text3);margin-top:6px;font-style:italic;}
+.trend-badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--teal-dim);color:var(--teal);margin-left:6px;}
 </style>
 </head>
 <body>
@@ -175,8 +212,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   <div id="bottomnav">
     <div class="bnav-item active" onclick="showPage('dashboard',this)"><div class="bnav-icon">⬡</div><div class="bnav-label">Home</div></div>
     <div class="bnav-item" onclick="showPage('learn',this)"><div class="bnav-icon">◈</div><div class="bnav-label">Learn</div></div>
+    <div class="bnav-item" onclick="showPage('market',this)"><div class="bnav-icon">◭</div><div class="bnav-label">Market</div></div>
     <div class="bnav-item" onclick="showPage('resources',this)"><div class="bnav-icon">◎</div><div class="bnav-label">Resources</div></div>
-    <div class="bnav-item" onclick="showPage('glossary',this)"><div class="bnav-icon">◫</div><div class="bnav-label">Glossary</div></div>
     <div class="bnav-item" onclick="showPage('ai',this)"><div class="bnav-icon">◉</div><div class="bnav-label">Ask AI</div></div>
   </div>
 
@@ -194,9 +231,14 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 
   <div class="stat-row">
     <div class="stat-card"><div class="stat-n" id="sTopics">0</div><div class="stat-l">Topics read</div></div>
-    <div class="stat-card"><div class="stat-n">48</div><div class="stat-l">Total topics</div></div>
+    <div class="stat-card"><div class="stat-n">16</div><div class="stat-l">Total topics</div></div>
     <div class="stat-card"><div class="stat-n">90</div><div class="stat-l">Day sprint</div></div>
-    <div class="stat-card"><div class="stat-n">15+</div><div class="stat-l">Resources</div></div>
+    <div class="stat-card"><div class="stat-n">$53B</div><div class="stat-l">Market by 2030</div></div>
+  </div>
+
+  <div class="mkt-card" style="border-color:var(--amber2);background:var(--amber-dim)">
+    <div class="mkt-card-h" style="color:var(--amber)"><span class="ic">◭</span>You're building at the perfect time</div>
+    <p style="color:var(--text2)">Gartner projects supply chain agentic AI software will grow 25x to $53 billion by 2030, with enterprise adoption jumping from 5% to 60%. Check the Market tab for the latest models, in-demand skills, and what companies are buying.</p>
   </div>
 
   <div class="section-header">Monthly progress</div>
@@ -221,24 +263,170 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   <div class="pb"></div>
 </div>
 
-<!-- ═══ RESOURCES ═══ -->
-<div class="page" id="page-resources">
-  <div class="res-filter" id="resFilters">
-    <div class="rfil active" onclick="filterRes('all',this)">All</div>
-    <div class="rfil" onclick="filterRes('video',this)">Videos</div>
-    <div class="rfil" onclick="filterRes('course',this)">Courses</div>
-    <div class="rfil" onclick="filterRes('docs',this)">Docs</div>
-    <div class="rfil" onclick="filterRes('must',this)">Must-do</div>
+<!-- ═══ MARKET & TRENDS ═══ -->
+<div class="page" id="page-market">
+  <div class="mkt-hero">
+    <div class="mkt-hero-eyebrow">Market intelligence · 2026</div>
+    <div class="mkt-hero-h">The SC AI market right now</div>
+    <div class="mkt-hero-p">Live snapshot of where supply chain AI is heading, what companies are buying, and what skills command the highest salaries. Updated from 2026 industry data.</div>
   </div>
-  <div id="resList"></div>
+
+  <div class="mkt-stat-row">
+    <div class="mkt-stat"><div class="mkt-stat-n">$53B</div><div class="mkt-stat-l">SCM agentic AI software spend by 2030 (Gartner)</div></div>
+    <div class="mkt-stat"><div class="mkt-stat-n">60%</div><div class="mkt-stat-l">Of enterprises will use agentic AI in SCM by 2030</div></div>
+    <div class="mkt-stat"><div class="mkt-stat-n">5%→60%</div><div class="mkt-stat-l">Agentic AI adoption jump 2025 to 2030</div></div>
+    <div class="mkt-stat"><div class="mkt-stat-n">25%</div><div class="mkt-stat-l">Faster skill change in AI-adjacent SC roles</div></div>
+  </div>
+
+  <div class="section-header">The big shift: generative → agentic</div>
+  <div class="mkt-card">
+    <div class="mkt-card-h"><span class="ic">⚡</span>Why this matters for your platform</div>
+    <p>The industry has moved decisively from generative AI (creates recommendations and content) to agentic AI (autonomously executes decisions). This is exactly what you're building — and the timing is ideal.</p>
+    <p>Gartner projects SCM software with agentic AI will grow from under $2 billion in 2025 to $53 billion by 2030. Adoption jumps from 5% of enterprises to 60% in that window. You are building into a market about to 25x.</p>
+    <div class="mkt-source">Source: Gartner, April 2026</div>
+  </div>
+
+  <div class="section-header">2026 agentic AI trends — build these in</div>
+  <div class="mkt-card">
+    <div class="mkt-card-h"><span class="ic">📈</span>What separates winning platforms</div>
+    <div class="mkt-list">
+      <div class="mkt-li"><strong>Outcome guarantees over ROI promises.</strong> Buyers want contractual commitments tied to forecast accuracy or service levels — not theoretical models. Build measurable outcomes into your product.</div>
+      <div class="mkt-li"><strong>Ontology-bound architectures.</strong> The new guardrail against hallucination — agents constrained by a structured model of your SC domain, not free-form reasoning.</div>
+      <div class="mkt-li"><strong>Human-in-the-loop governance.</strong> Enterprises embed policies, guardrails, and auditability directly into agents. Agents must know how far they're allowed to go.</div>
+      <div class="mkt-li"><strong>Budget shifting to business units.</strong> Decisions are moving from IT to ops leaders who buy on workflow impact. Sell to the SC director, not just the CTO.</div>
+      <div class="mkt-li"><strong>Multi-agent, multi-vendor orchestration.</strong> The future is clusters of specialized agents coordinating — exactly your Month 3 architecture.</div>
+    </div>
+    <div class="mkt-source">Source: PR Newswire / Prolifics / EY, 2026</div>
+  </div>
+
+  <div class="section-header">Latest LLM models (May 2026)</div>
+  <div class="mkt-card">
+    <div class="mkt-card-h"><span class="ic">🧠</span>Which model for what</div>
+    <div class="model-row">
+      <div><div class="model-name">Claude Opus 4.7</div><div class="model-use">Best for coding + long-running agentic tasks</div></div>
+      <span class="model-tag" style="background:var(--teal-dim);color:var(--teal)">Your agents</span>
+    </div>
+    <div class="model-row">
+      <div><div class="model-name">Claude Sonnet 4.6</div><div class="model-use">98% of Opus quality, fraction of cost. Best writing</div></div>
+      <span class="model-tag" style="background:var(--teal-dim);color:var(--teal)">Your default</span>
+    </div>
+    <div class="model-row">
+      <div><div class="model-name">GPT-5.5</div><div class="model-use">Best for daily chat + knowledge work</div></div>
+      <span class="model-tag" style="background:var(--purple-dim);color:var(--purple)">Alt</span>
+    </div>
+    <div class="model-row">
+      <div><div class="model-name">Gemini 3.1 Pro</div><div class="model-use">Hardest reasoning, cheapest API output, 1M context</div></div>
+      <span class="model-tag" style="background:var(--purple-dim);color:var(--purple)">Budget</span>
+    </div>
+    <div class="model-row">
+      <div><div class="model-name">DeepSeek V4</div><div class="model-use">Open-source, cost-effective, self-hostable</div></div>
+      <span class="model-tag" style="background:var(--amber-dim);color:var(--amber)">Open</span>
+    </div>
+    <p style="margin-top:10px">For your SC platform: Claude Sonnet 4.6 as the workhorse (cost-efficient, great instruction-following), Claude Opus 4.7 for complex multi-step agent tasks. Claude powers the leading agentic dev tools — Cursor, Windsurf, Claude Code.</p>
+    <div class="mkt-source">Source: Artificial Analysis / Pluralsight, May 2026</div>
+  </div>
+
+  <div class="section-header">Most in-demand SC AI skills</div>
+  <div class="mkt-card">
+    <div class="mkt-card-h"><span class="ic">🎯</span>What employers prioritize in 2026</div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">AI literacy (what AI can/can't do)</span><span class="skill-bar-pct">Essential</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%;background:var(--teal)"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">Python for data automation</span><span class="skill-bar-pct">High</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%;background:var(--teal)"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">SQL / data querying (ERP, WMS)</span><span class="skill-bar-pct">High</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:82%;background:var(--purple)"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">Power BI / Tableau visualization</span><span class="skill-bar-pct">High</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:78%;background:var(--purple)"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">Demand forecasting + ML models</span><span class="skill-bar-pct">Growing</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:70%;background:var(--coral)"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-top"><span class="skill-bar-name">Agentic AI orchestration</span><span class="skill-bar-pct">Emerging edge</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:60%;background:var(--coral)"></div></div>
+    </div>
+    <p style="margin-top:10px">The key insight from MHI's 2026 report: AI moved from "optional to essential." You don't need to be a data scientist — but understanding how AI tools work and how to interpret their outputs is now baseline. Combining deep SC domain expertise with AI literacy is what commands the highest salaries.</p>
+    <div class="mkt-source">Source: MHI 2026 trends report / ScopeRecruiting</div>
+  </div>
+
+  <div class="section-header">What companies are hiring for</div>
+  <div class="job-card">
+    <div class="job-title">Supply Chain Analyst (AI-augmented)</div>
+    <div class="job-meta">Most common role · skillset shifting toward AI/ML</div>
+    <div class="job-skills"><span class="job-skill">SQL</span><span class="job-skill">Python</span><span class="job-skill">ML forecasting</span><span class="job-skill">Power BI</span><span class="job-skill">ERP</span></div>
+  </div>
+  <div class="job-card">
+    <div class="job-title">AI/ML Specialist — Supply Chain</div>
+    <div class="job-meta">"Spike in demand" per industry surveys</div>
+    <div class="job-skills"><span class="job-skill">Python</span><span class="job-skill">ML models</span><span class="job-skill">RAG</span><span class="job-skill">Forecasting</span><span class="job-skill">Data science</span></div>
+  </div>
+  <div class="job-card">
+    <div class="job-title">Sourcing Analytics Manager</div>
+    <div class="job-meta">e.g. Gap Inc — AI/data science + SC expertise</div>
+    <div class="job-skills"><span class="job-skill">Analytics</span><span class="job-skill">AI</span><span class="job-skill">Supplier data</span><span class="job-skill">Strategy</span></div>
+  </div>
+  <div class="job-card">
+    <div class="job-title">Business Systems Analyst — SC Optimization</div>
+    <div class="job-meta">e.g. Instacart — emerging AI for SC optimization</div>
+    <div class="job-skills"><span class="job-skill">AI tools</span><span class="job-skill">Systems</span><span class="job-skill">Optimization</span><span class="job-skill">SQL</span></div>
+  </div>
+  <div class="mkt-card" style="margin-top:4px">
+    <p style="margin:0"><strong style="color:var(--text)">Your edge:</strong> You already have the domain expertise these roles fight over. By adding the AI build skills in this 90-day plan, you're not competing for these jobs — you're building the platform these companies will buy.</p>
+  </div>
+  <div class="mkt-source" style="padding-left:2px;margin-bottom:4px">Sources: SCM Talent, DSJ Global, ScopeRecruiting 2026</div>
+
+  <div class="section-header">Trending build stack (2026)</div>
+  <div class="mkt-card">
+    <div class="mkt-card-h"><span class="ic">🛠️</span>What's hot right now</div>
+    <div class="mkt-list">
+      <div class="mkt-li"><strong>Multi-model routing.</strong> Unified APIs (260+ models under one key) let you route cheap tasks to small models, hard tasks to frontier models. Big cost savings at scale.</div>
+      <div class="mkt-li"><strong>Massive context windows.</strong> Some models now hit 12M tokens — feed entire supplier databases or years of logs in one call.</div>
+      <div class="mkt-li"><strong>Agent harnesses matter more than models.</strong> The same model swings 30-50% in performance depending on the agent framework wrapping it. Invest in your orchestration layer.</div>
+      <div class="mkt-li"><strong>Native computer use.</strong> Agents can now operate software UIs directly — relevant for agents that work inside your existing SC tools.</div>
+      <div class="mkt-li"><strong>MCP standardization.</strong> The protocol for connecting agents to data sources is becoming the industry standard. Build on it for future-proof integrations.</div>
+    </div>
+    <div class="mkt-source">Source: LLM-Stats / DEV Community / Microsoft, 2026</div>
+  </div>
+
   <div class="pb"></div>
 </div>
 
-<!-- ═══ GLOSSARY ═══ -->
-<div class="page" id="page-glossary">
-  <input class="glos-search" placeholder="Search terms..." oninput="filterGlos(this.value)" id="glosInput">
-  <div id="glosList"></div>
+<!-- ═══ RESOURCES ═══ -->
+<div class="page" id="page-resources">
+  <div class="res-filter" id="resSubTabs" style="margin-bottom:14px">
+    <div class="rfil active" onclick="switchResTab('resources',this)">Courses & Docs</div>
+    <div class="rfil" onclick="switchResTab('glossary',this)">Glossary</div>
+  </div>
+
+  <div id="resTab-resources">
+    <div class="res-filter" id="resFilters">
+      <div class="rfil active" onclick="filterRes('all',this)">All</div>
+      <div class="rfil" onclick="filterRes('video',this)">Videos</div>
+      <div class="rfil" onclick="filterRes('course',this)">Courses</div>
+      <div class="rfil" onclick="filterRes('docs',this)">Docs</div>
+      <div class="rfil" onclick="filterRes('must',this)">Must-do</div>
+    </div>
+    <div id="resList"></div>
+  </div>
+
+  <div id="resTab-glossary" style="display:none">
+    <input class="glos-search" placeholder="Search terms..." oninput="filterGlos(this.value)" id="glosInput">
+    <div id="glosList"></div>
+  </div>
   <div class="pb"></div>
+</div>
+
+<!-- ═══ GLOSSARY (merged into resources) ═══ -->
+<div class="page" id="page-glossary" style="display:none">
+  <div id="glosListOld"></div>
 </div>
 
 <!-- ═══ AI CHAT ═══ -->
@@ -337,7 +525,7 @@ const TOPICS = [
     {h:'Chain-of-thought',body:'Adding "think step by step" or "reason through this carefully" before answering improves accuracy on complex tasks by 20–40%. Critical for SC analysis.',
      code:'# Add to your prompts:\n"Before giving your final answer, reason through:\n1. What data do I have?\n2. What patterns do I see?\n3. What are the risks?\nThen provide your structured output."'},
     {h:'Structured outputs',body:'For SC systems, you almost always want JSON, not prose. Modern APIs let you enforce a schema — the model MUST output valid JSON matching your structure.',
-     code:'# Claude API with forced JSON:\nresponse = client.messages.create(\n  model="claude-sonnet-4-5",\n  system="You are a SC analyst. Output only valid JSON.",\n  messages=[{"role":"user","content":prompt}]\n)'}
+     code:'# Claude API with forced JSON:\nresponse = client.messages.create(\n  model="claude-sonnet-4-6",\n  system="You are a SC analyst. Output only valid JSON.",\n  messages=[{"role":"user","content":prompt}]\n)'}
    ],
    sc_example:'For your SaaS, you\'ll have a library of prompts: one for supplier risk scoring, one for demand anomaly explanation, one for contract clause extraction, one for disruption impact analysis. Each is a precision tool.',
    callout:'The single most impactful thing you can do this week: take one manual analysis you do today in your SC business, describe it precisely in a prompt, and test it with Claude API. You\'ll be shocked at the quality.'
@@ -364,9 +552,9 @@ const TOPICS = [
     {h:'Installation and setup',body:'',
      code:'# Install SDK\npip install anthropic\n\n# Set API key (get at console.anthropic.com)\nimport os\nos.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."\n\nimport anthropic\nclient = anthropic.Anthropic()'},
     {h:'Your first SC analysis call',body:'',
-     code:'# Simple supplier risk analysis\nresponse = client.messages.create(\n    model="claude-sonnet-4-5",\n    max_tokens=1024,\n    system="You are a supply chain risk expert.",\n    messages=[\n        {\n            "role": "user",\n            "content": f"""\n            Analyze this supplier and give a risk score 1-10:\n            Name: {supplier_name}\n            Country: {country}\n            Lead time: {lead_time} days\n            On-time rate: {otif_rate}%\n            \n            Output JSON: {{risk_score, reasons[], action}}\n            """\n        }\n    ]\n)\nprint(response.content[0].text)'},
+     code:'# Simple supplier risk analysis\nresponse = client.messages.create(\n    model="claude-sonnet-4-6",\n    max_tokens=1024,\n    system="You are a supply chain risk expert.",\n    messages=[\n        {\n            "role": "user",\n            "content": f"""\n            Analyze this supplier and give a risk score 1-10:\n            Name: {supplier_name}\n            Country: {country}\n            Lead time: {lead_time} days\n            On-time rate: {otif_rate}%\n            \n            Output JSON: {{risk_score, reasons[], action}}\n            """\n        }\n    ]\n)\nprint(response.content[0].text)'},
     {h:'Tool use (for agents)',body:'Tool use lets the model call your functions. This is the foundation of your agentic SC platform.',
-     code:'tools = [{\n  "name": "get_supplier_data",\n  "description": "Fetch supplier metrics from database",\n  "input_schema": {\n    "type": "object",\n    "properties": {\n      "supplier_id": {"type":"string"}\n    }\n  }\n}]\n\nresponse = client.messages.create(\n  model="claude-sonnet-4-5",\n  tools=tools,\n  messages=[{"role":"user","content":"Analyze supplier SUP-001"}]\n)'}
+     code:'tools = [{\n  "name": "get_supplier_data",\n  "description": "Fetch supplier metrics from database",\n  "input_schema": {\n    "type": "object",\n    "properties": {\n      "supplier_id": {"type":"string"}\n    }\n  }\n}]\n\nresponse = client.messages.create(\n  model="claude-sonnet-4-6",\n  tools=tools,\n  messages=[{"role":"user","content":"Analyze supplier SUP-001"}]\n)'}
    ],
    sc_example:'Connect this to your existing SaaS database. When a user asks "why is my OTIF dropping?", your system fetches the relevant shipment data, injects it into the prompt, and Claude returns a structured root-cause analysis.',
    callout:'Start building this week. You don\'t need to understand the model internals. Treat it like a very smart API that reads text and returns text. Build your first SC prototype today.'
@@ -423,7 +611,7 @@ const TOPICS = [
    intro:'LlamaIndex is the leading framework for building RAG applications. It handles document loading, chunking, embedding, indexing, and querying — letting you focus on your SC use case, not the plumbing.',
    sections:[
     {h:'Your first SC knowledge base',body:'',
-     code:'pip install llama-index\n\nfrom llama_index.core import VectorStoreIndex, SimpleDirectoryReader\nfrom llama_index.llms.anthropic import Anthropic\nfrom llama_index.embeddings.openai import OpenAIEmbedding\n\n# Load all your SC documents\ndocs = SimpleDirectoryReader("./sc_documents/").load_data()\n# Supports: PDF, Word, CSV, text files\n\n# Build index (embed + store automatically)\nindex = VectorStoreIndex.from_documents(\n    docs,\n    embed_model=OpenAIEmbedding(model="text-embedding-3-small")\n)\n\n# Query engine\nquery_engine = index.as_query_engine(\n    llm=Anthropic(model="claude-sonnet-4-5")\n)\n\n# Ask questions over YOUR data\nresponse = query_engine.query(\n    "Which suppliers have payment terms exceeding 60 days?"\n)\nprint(response)'},
+     code:'pip install llama-index\n\nfrom llama_index.core import VectorStoreIndex, SimpleDirectoryReader\nfrom llama_index.llms.anthropic import Anthropic\nfrom llama_index.embeddings.openai import OpenAIEmbedding\n\n# Load all your SC documents\ndocs = SimpleDirectoryReader("./sc_documents/").load_data()\n# Supports: PDF, Word, CSV, text files\n\n# Build index (embed + store automatically)\nindex = VectorStoreIndex.from_documents(\n    docs,\n    embed_model=OpenAIEmbedding(model="text-embedding-3-small")\n)\n\n# Query engine\nquery_engine = index.as_query_engine(\n    llm=Anthropic(model="claude-sonnet-4-6")\n)\n\n# Ask questions over YOUR data\nresponse = query_engine.query(\n    "Which suppliers have payment terms exceeding 60 days?"\n)\nprint(response)'},
     {h:'Custom document loaders for SC',body:'LlamaIndex has loaders for everything in your SC stack.',
      code:'from llama_index.readers.database import DatabaseReader\nfrom llama_index.readers.web import SimpleWebPageReader\n\n# Load from your database\nreader = DatabaseReader(engine=your_sqlalchemy_engine)\ndocs = reader.load_data(\n    query="SELECT * FROM supplier_scorecards WHERE date > \'2024-01-01\'"\n)\n\n# Load from Notion (if you use it for SOPs)\nfrom llama_index.readers.notion import NotionPageReader\nnotion_docs = NotionPageReader().load_data(page_ids=[...])'},
     {h:'Production setup with Pinecone',body:'',
@@ -716,6 +904,12 @@ function renderResources(){
 }
 
 let activeFilter='all';
+function switchResTab(tab,el){
+  document.querySelectorAll('#resSubTabs .rfil').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('resTab-resources').style.display=tab==='resources'?'':'none';
+  document.getElementById('resTab-glossary').style.display=tab==='glossary'?'':'none';
+}
 function filterRes(f,el){
   activeFilter=f;
   document.querySelectorAll('.rfil').forEach(x=>x.classList.remove('active'));
@@ -790,7 +984,14 @@ The user's context:
 - Wants to add: AI Q&A over SC data, supplier risk scoring, demand forecasting, disruption monitoring, agentic automation
 - Tech stack: likely Python-compatible, needs to integrate with existing APIs
 - Timeline: 90 days to ship v1 of AI layer
-- Using Claude API as primary LLM, LlamaIndex for RAG, Pinecone for vectors, LangGraph for agents
+- Using Claude API as primary LLM (Claude Sonnet 4.6 as workhorse, Opus 4.7 for complex agents), LlamaIndex for RAG, Pinecone for vectors, LangGraph for agents
+
+Current 2026 market context you should reference when relevant:
+- Gartner projects SCM agentic AI software will grow from <$2B (2025) to $53B by 2030; adoption from 5% to 60% of enterprises
+- The industry shift is generative AI → agentic AI (autonomous execution of decisions)
+- Winning platforms in 2026 emphasize: outcome guarantees, ontology-bound architectures (anti-hallucination), human-in-the-loop governance, multi-agent orchestration
+- Latest models: Claude Opus 4.7 (best agentic/coding), Claude Sonnet 4.6 (best value, 98% of Opus quality), GPT-5.5, Gemini 3.1 Pro (cheapest, 1M context), DeepSeek V4 (open-source)
+- Hot trends: multi-model routing, massive context windows, MCP standardization, native computer use, agent harnesses mattering more than raw model choice
 
 Keep answers concise but complete. Use code snippets when relevant. Always connect back to supply chain.`;
 
@@ -812,7 +1013,7 @@ async function sendChat(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-5',
+        model:'claude-sonnet-4-6',
         max_tokens:1000,
         system:SYSTEM,
         messages:chatHistory
