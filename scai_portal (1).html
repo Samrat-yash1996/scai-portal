@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SC·AI Learning Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap');
+:root {
+  --bg:#0f0f0f; --bg2:#161616; --bg3:#1e1e1e; --bg4:#252525;
+  --border:#2a2a2a; --border2:#333;
+  --text:#f0ede8; --text2:#a09e99; --text3:#6a6864;
+  --teal:#00c896; --teal2:#00a87e; --teal-dim:#0a2e22;
+  --purple:#8b7cf6; --purple2:#6d5fe0; --purple-dim:#1a1630;
+  --coral:#f07050; --coral2:#d85535; --coral-dim:#2e1510;
+  --amber:#f0a830; --amber2:#d08818; --amber-dim:#2e1f08;
+  --blue:#5090f0; --blue-dim:#0f1e38;
+  --r:12px; --r2:8px; --r3:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+
+/* LAYOUT */
+#app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;}
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;z-index:50;}
+#main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+#bottomnav{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;cursor:pointer;transition:color .15s;color:var(--text3);gap:3px;user-select:none;}
+.bnav-item.active{color:var(--teal);}
+.bnav-icon{font-size:20px;line-height:1;}
+.bnav-label{font-size:9px;font-weight:500;letter-spacing:.03em;}
+
+/* LOGO */
+.logo{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:-.5px;}
+.logo span{color:var(--teal);}
+.xp-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);background:var(--teal-dim);padding:3px 10px;border-radius:20px;border:1px solid var(--teal2);}
+
+/* PAGES */
+.page{display:none;padding:16px;padding-bottom:24px;}
+.page.active{display:block;}
+
+/* AI CHAT */
+#page-ai{display:none;flex-direction:column;height:100%;padding:0;}
+#page-ai.active{display:flex;}
+#chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.msg{max-width:88%;padding:12px 14px;border-radius:var(--r);font-size:13px;line-height:1.6;}
+.msg.user{align-self:flex-end;background:var(--teal-dim);border:1px solid var(--teal2);color:var(--text);}
+.msg.ai{align-self:flex-start;background:var(--bg3);border:1px solid var(--border2);color:var(--text);}
+.msg.ai code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--bg4);padding:1px 5px;border-radius:4px;color:var(--teal);}
+.msg.loading{opacity:.5;}
+#chat-input-wrap{padding:12px 16px;background:var(--bg2);border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;}
+#chat-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 14px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;resize:none;max-height:100px;outline:none;line-height:1.5;}
+#chat-input:focus{border-color:var(--teal2);}
+#chat-send{width:38px;height:38px;border-radius:var(--r2);background:var(--teal);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
+#chat-send:active{background:var(--teal2);}
+#chat-send svg{width:16px;height:16px;fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.ai-tag{font-size:10px;font-weight:600;color:var(--teal);letter-spacing:.06em;margin-bottom:4px;}
+.quick-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.quick-pill{font-size:11px;padding:6px 12px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);cursor:pointer;transition:border-color .15s;user-select:none;}
+.quick-pill:active{border-color:var(--teal);}
+
+/* LEARN PAGE */
+.section-header{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:20px 0 10px;}
+.section-header:first-child{margin-top:0;}
+.phase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
+.phase-head{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;user-select:none;}
+.phase-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.phase-txt{flex:1;}
+.phase-title{font-size:14px;font-weight:600;color:var(--text);}
+.phase-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.phase-arrow{color:var(--text3);font-size:14px;transition:transform .2s;flex-shrink:0;}
+.phase-card.open .phase-arrow{transform:rotate(180deg);}
+.phase-body{display:none;border-top:1px solid var(--border);}
+.phase-card.open .phase-body{display:block;}
+
+.topic-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;user-select:none;}
+.topic-item:last-child{border-bottom:none;}
+.topic-item:active{background:var(--bg3);}
+.topic-dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;margin-top:5px;transition:all .15s;}
+.topic-dot.done{background:var(--teal);border-color:var(--teal);}
+.topic-info{flex:1;}
+.topic-name{font-size:13px;font-weight:500;color:var(--text);}
+.topic-preview{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;}
+.topic-badges{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.tbadge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.03em;}
+
+/* TOPIC DETAIL */
+#topic-detail{display:none;position:absolute;inset:0;background:var(--bg);z-index:200;flex-direction:column;max-width:480px;margin:0 auto;}
+#topic-detail.show{display:flex;}
+.detail-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.back-btn{width:34px;height:34px;border-radius:var(--r2);background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:16px;color:var(--text2);}
+.detail-title{font-size:15px;font-weight:600;color:var(--text);flex:1;line-height:1.3;}
+.detail-body{flex:1;overflow-y:auto;padding:20px 16px;}
+.detail-section{margin-bottom:24px;}
+.detail-section h2{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.detail-section h2::before{content:'';width:3px;height:16px;background:var(--teal);border-radius:2px;display:inline-block;flex-shrink:0;}
+.detail-section p{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:10px;}
+.detail-section ul{padding-left:4px;display:flex;flex-direction:column;gap:7px;}
+.detail-section li{font-size:13px;color:var(--text2);line-height:1.6;padding-left:14px;position:relative;}
+.detail-section li::before{content:'→';position:absolute;left:0;color:var(--teal);font-size:11px;top:2px;}
+.callout{background:var(--teal-dim);border:1px solid var(--teal2);border-radius:var(--r2);padding:12px 14px;margin:12px 0;}
+.callout p{color:var(--text);font-size:12px;line-height:1.6;margin:0;}
+.callout strong{color:var(--teal);}
+.code-block{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:14px;margin:12px 0;overflow-x:auto;}
+.code-block code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);line-height:1.7;white-space:pre;}
+.sc-example{background:var(--purple-dim);border:1px solid var(--purple2);border-radius:var(--r2);padding:12px 14px;margin:12px 0;}
+.sc-example .label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+.sc-example p{font-size:12px;color:var(--text2);line-height:1.6;margin:0;}
+.complete-btn{width:100%;padding:14px;background:var(--teal);color:#000;font-size:14px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;margin-top:8px;transition:background .15s;font-family:'Inter',sans-serif;}
+.complete-btn:active{background:var(--teal2);}
+.complete-btn.done{background:var(--bg3);color:var(--teal);border:1px solid var(--teal);}
+
+/* RESOURCES PAGE */
+.res-filter{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:14px;}
+.res-filter::-webkit-scrollbar{display:none;}
+.rfil{font-size:11px;font-weight:500;padding:6px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;user-select:none;}
+.rfil.active{background:var(--teal-dim);border-color:var(--teal);color:var(--teal);}
+.res-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;text-decoration:none;display:block;transition:border-color .15s;}
+.res-card:active{border-color:var(--border2);}
+.res-top{display:flex;gap:10px;align-items:flex-start;}
+.res-ico{width:38px;height:38px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.res-meta{flex:1;}
+.res-title{font-size:13px;font-weight:600;color:var(--text);}
+.res-src{font-size:11px;color:var(--text3);margin-top:2px;}
+.res-desc{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.55;}
+.res-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;}
+.rtag{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;}
+.rtag-free{background:var(--teal-dim);color:var(--teal);}
+.rtag-paid{background:var(--coral-dim);color:var(--coral);}
+.rtag-video{background:var(--amber-dim);color:var(--amber);}
+.rtag-docs{background:var(--purple-dim);color:var(--purple);}
+.rtag-must{background:var(--teal);color:#000;}
+.rtag-week{background:var(--blue-dim);color:var(--blue);}
+
+/* DASHBOARD */
+.dash-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.dash-eyebrow{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.dash-h1{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1.2;color:var(--text);margin-bottom:8px;}
+.dash-sub{font-size:12px;color:var(--text3);line-height:1.6;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:6px;margin-top:14px;}
+.prog-bar{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .5s ease;}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.stat-n{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:var(--text);line-height:1;}
+.stat-l{font-size:11px;color:var(--text3);margin-top:4px;}
+.month-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.month-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.month-name{font-size:13px;font-weight:600;color:var(--text);}
+.month-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.month-pct{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--teal);}
+
+/* GLOSSARY */
+.glos-search{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:10px 18px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;margin-bottom:14px;}
+.glos-search:focus{border-color:var(--teal2);}
+.glos-item{padding:14px 0;border-bottom:1px solid var(--border);}
+.glos-item:last-child{border-bottom:none;}
+.glos-term{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.glos-sc{font-size:10px;font-weight:600;color:var(--coral);background:var(--coral-dim);padding:2px 7px;border-radius:4px;margin-left:8px;vertical-align:middle;}
+.glos-def{font-size:12px;color:var(--text2);line-height:1.65;}
+.glos-example{font-size:11px;color:var(--teal);margin-top:6px;padding-left:10px;border-left:2px solid var(--teal-dim);}
+
+/* UTIL */
+.pb{padding-bottom:32px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="logo">SC<span>·AI</span></div>
+    <div class="xp-badge" id="xpBadge">0 / 48 done</div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div id="bottomnav">
+    <div class="bnav-item active" onclick="showPage('dashboard',this)"><div class="bnav-icon">⬡</div><div class="bnav-label">Home</div></div>
+    <div class="bnav-item" onclick="showPage('learn',this)"><div class="bnav-icon">◈</div><div class="bnav-label">Learn</div></div>
+    <div class="bnav-item" onclick="showPage('resources',this)"><div class="bnav-icon">◎</div><div class="bnav-label">Resources</div></div>
+    <div class="bnav-item" onclick="showPage('glossary',this)"><div class="bnav-icon">◫</div><div class="bnav-label">Glossary</div></div>
+    <div class="bnav-item" onclick="showPage('ai',this)"><div class="bnav-icon">◉</div><div class="bnav-label">Ask AI</div></div>
+  </div>
+
+  <div id="main-content">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page active" id="page-dashboard">
+  <div class="dash-hero">
+    <div class="dash-eyebrow">Supply Chain AI · Fast Track</div>
+    <div class="dash-h1">Your 90-day<br>AI builder plan</div>
+    <div class="dash-sub">From SC SaaS founder → AI platform builder. Tap any topic to read the full material.</div>
+    <div class="prog-label"><span>Overall</span><span id="overallPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="overallBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-n" id="sTopics">0</div><div class="stat-l">Topics read</div></div>
+    <div class="stat-card"><div class="stat-n">48</div><div class="stat-l">Total topics</div></div>
+    <div class="stat-card"><div class="stat-n">90</div><div class="stat-l">Day sprint</div></div>
+    <div class="stat-card"><div class="stat-n">15+</div><div class="stat-l">Resources</div></div>
+  </div>
+
+  <div class="section-header">Monthly progress</div>
+  <div class="month-card">
+    <div class="month-top"><div><div class="month-name">Month 1 — AI + LLM foundations</div><div class="month-sub">Weeks 1–4 · 16 topics</div></div><div class="month-pct" id="m1p">0%</div></div>
+    <div class="prog-bar"><div class="prog-fill" id="m1b" style="width:0%;background:var(--teal)"></div></div>
+  </div>
+  <div class="month-card">
+    <div class="month-top"><div><div class="month-name">Month 2 — RAG, embeddings & fine-tuning</div><div class="month-sub">Weeks 5–8 · 16 topics</div></div><div class="month-pct" id="m2p">0%</div></div>
+    <div class="prog-bar"><div class="prog-fill" id="m2b" style="width:0%;background:var(--purple)"></div></div>
+  </div>
+  <div class="month-card">
+    <div class="month-top"><div><div class="month-name">Month 3 — Agentic AI & build</div><div class="month-sub">Weeks 9–12 · 16 topics</div></div><div class="month-pct" id="m3p">0%</div></div>
+    <div class="prog-bar"><div class="prog-fill" id="m3b" style="width:0%;background:var(--coral)"></div></div>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══ LEARN ═══ -->
+<div class="page" id="page-learn">
+  <div id="learn-list"></div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══ RESOURCES ═══ -->
+<div class="page" id="page-resources">
+  <div class="res-filter" id="resFilters">
+    <div class="rfil active" onclick="filterRes('all',this)">All</div>
+    <div class="rfil" onclick="filterRes('video',this)">Videos</div>
+    <div class="rfil" onclick="filterRes('course',this)">Courses</div>
+    <div class="rfil" onclick="filterRes('docs',this)">Docs</div>
+    <div class="rfil" onclick="filterRes('must',this)">Must-do</div>
+  </div>
+  <div id="resList"></div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══ GLOSSARY ═══ -->
+<div class="page" id="page-glossary">
+  <input class="glos-search" placeholder="Search terms..." oninput="filterGlos(this.value)" id="glosInput">
+  <div id="glosList"></div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══ AI CHAT ═══ -->
+<div class="page" id="page-ai">
+  <div id="chat-messages">
+    <div style="text-align:center;padding:20px 0 8px;">
+      <div style="font-size:28px;margin-bottom:8px;">◉</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;">Ask your SC·AI tutor</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.6;">Powered by Claude. Ask anything about supply chain AI, concepts, code, or your platform.</div>
+    </div>
+    <div class="quick-pills" id="quickPills">
+      <div class="quick-pill" onclick="askQuick(this)">What is RAG and why do I need it?</div>
+      <div class="quick-pill" onclick="askQuick(this)">How do I fine-tune for supply chain?</div>
+      <div class="quick-pill" onclick="askQuick(this)">Explain LLM agents simply</div>
+      <div class="quick-pill" onclick="askQuick(this)">Best vector DB for my SC SaaS?</div>
+      <div class="quick-pill" onclick="askQuick(this)">What SC AI use cases should I build first?</div>
+    </div>
+  </div>
+  <div id="chat-input-wrap">
+    <textarea id="chat-input" placeholder="Ask about any SC AI concept..." rows="1" onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="chat-send" onclick="sendChat()">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+  </div><!-- end main-content -->
+
+  <!-- TOPIC DETAIL OVERLAY -->
+  <div id="topic-detail">
+    <div class="detail-header">
+      <div class="back-btn" onclick="closeTopic()">←</div>
+      <div class="detail-title" id="detail-title"></div>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const TOPICS = [
+ {id:'llm1',phase:1,week:1,name:'What is an LLM?',preview:'The engine behind all AI assistants',badges:[{l:'Foundational',c:'#00c896',bg:'#0a2e22'}],
+  content:{
+   intro:'A Large Language Model (LLM) is a neural network trained on enormous amounts of text data — books, websites, code, research papers — that learns to predict and generate language. When you type a question, it generates the most probable, helpful continuation of that text.',
+   sections:[
+    {h:'How it actually works',body:'Think of an LLM as a compressed version of all human knowledge encoded as billions of numbers (parameters). During training, it reads text, makes a prediction for the next word, gets told if it was right, and adjusts its parameters slightly. After doing this trillions of times, it develops a deep statistical understanding of language, facts, and reasoning.',
+     bullets:['GPT-4 has ~1.7 trillion parameters — each is a tiny adjustable number','Claude (Anthropic) is trained with Constitutional AI for safer, more honest outputs','Training costs millions of dollars in compute — inference (using it) costs pennies','The model never "looks up" answers — it reconstructs them from compressed patterns']},
+    {h:'Tokens — the currency of LLMs',body:'LLMs don\'t read words — they read tokens. A token is roughly 3–4 characters. "supply chain" = 3 tokens. "OTIF" = 2 tokens. This matters because APIs charge per token and context windows are measured in tokens.',
+     code:'# "Hello supply chain world" = 5 tokens\n# Most English words = 1-2 tokens\n# API pricing: ~$0.003 per 1K tokens (Claude Sonnet)\n# 1 page of text ≈ 500 tokens'},
+    {h:'Inference vs training',body:'You will almost never train an LLM from scratch. Instead you call pre-trained models via API. Training = teaching the model (done by Anthropic/OpenAI). Inference = using the model to get answers (what you do).',
+     bullets:['Training: months, millions of dollars, hundreds of GPUs','Inference: milliseconds, fractions of a cent, your laptop']},
+   ],
+   sc_example:'Your SC SaaS can use an LLM to: answer questions about your supplier database ("which suppliers have a risk score above 7?"), summarize long freight contracts in seconds, generate automated disruption reports from news feeds, and explain why OTIF dropped last week using your own data.',
+   callout:'The key insight: you don\'t need to understand how to train an LLM. You need to understand how to direct one. That\'s prompt engineering — the most valuable skill for building your platform.'
+  }},
+
+ {id:'llm2',phase:1,week:1,name:'Transformers & attention',preview:'The architecture behind every modern LLM',badges:[{l:'Architecture',c:'#8b7cf6',bg:'#1a1630'}],
+  content:{
+   intro:'Every modern LLM — GPT, Claude, Gemini — is built on the Transformer architecture, invented in 2017. Before transformers, AI struggled with long documents because it could only look at nearby words. Attention changed everything.',
+   sections:[
+    {h:'The attention mechanism',body:'Attention lets every word in a sentence "look at" every other word simultaneously and decide how much to focus on each. When processing "The supplier in Shanghai delayed the shipment due to port congestion", the model attends to "supplier", "Shanghai", and "port congestion" simultaneously to understand the relationship.',
+     bullets:['Every word generates 3 vectors: Query (what am I looking for?), Key (what do I contain?), Value (what should I pass forward?)','Attention score = how much Query of word A matches Key of word B','High attention score = these words are strongly related in this context','Multi-head attention = doing this 8–96 times in parallel with different learned focuses']},
+    {h:'Why this matters for SC',body:'In a long logistics document, attention can instantly connect "delivery date" on page 1 with "force majeure clause" on page 8. This is why LLMs can read and understand your 50-page supplier contracts.',
+     code:'# Simplified attention:\n# Q · K_transpose / sqrt(d_k) → softmax → × V\n# The output = a weighted sum of all values\n# where weights = relevance scores between all pairs'}
+   ],
+   sc_example:'When you ask "what are the payment terms for suppliers with ISO certification?", the model attends to payment terms AND ISO certification simultaneously across all your documents, connecting them even if they\'re paragraphs apart.',
+   callout:'You don\'t need to implement attention. But understanding that "the model can read and connect any two points in a document" helps you understand why RAG works and how to structure your supply chain prompts.'
+  }},
+
+ {id:'llm3',phase:1,week:1,name:'Context windows & tokens',preview:'Memory limits and how to work with them',badges:[{l:'Practical',c:'#f0a830',bg:'#2e1f08'}],
+  content:{
+   intro:'The context window is the maximum amount of text an LLM can process in a single call — its working memory. Claude\'s context window is up to 200,000 tokens (~150,000 words). This is enormous, but you still need to manage it wisely.',
+   sections:[
+    {h:'What fits in a context window',body:'',
+     bullets:['~150 pages of a supply chain contract','A year of daily shipment logs','100+ supplier scorecards','Your entire product catalog with descriptions','A full conversation history with extensive analysis'],
+    },
+    {h:'Token counting matters',body:'Every API call costs tokens: your input (prompt + context) + the model\'s output = total tokens billed. Understanding this helps you design cost-efficient SC applications.',
+     code:'# Rough token estimates:\n# 1 average word ≈ 1.3 tokens\n# 1 page of text ≈ 500 tokens  \n# 1 supplier contract (20 pages) ≈ 10,000 tokens\n# Claude Sonnet cost: ~$0.003 per 1K input tokens\n# 1000 supplier analyses/month ≈ $3-15'},
+    {h:'Context window strategy',body:'For your SC platform, you won\'t always stuff the entire context. RAG (Month 2) solves this by retrieving only the relevant chunks. But for analysis tasks, larger context = better reasoning.',
+     bullets:['Short Q&A: small context, fast, cheap','Contract analysis: large context, slightly slower','Bulk supplier scoring: batch API calls, very cost-efficient','Real-time chat: conversation history + relevant data chunks']}
+   ],
+   sc_example:'When a user asks "why did our freight costs increase in Q3?", you retrieve the relevant freight invoices, carrier communications, and market rate data (maybe 20,000 tokens) and inject them into the context. The LLM reasons over all of it simultaneously.',
+   callout:'Practical rule: Claude 3.5 Sonnet has the best price/performance for most SC tasks. Use the 200K context for deep analysis, use RAG for chat-over-your-entire-database.'
+  }},
+
+ {id:'llm4',phase:1,week:2,name:'Prompt engineering',preview:'How to direct an LLM with precision',badges:[{l:'Critical skill',c:'#00c896',bg:'#0a2e22'}],
+  content:{
+   intro:'Prompt engineering is the art and science of writing instructions that get LLMs to produce exactly what you need. For a SC AI platform, this is your primary programming interface — more important than any other skill.',
+   sections:[
+    {h:'The anatomy of a great prompt',body:'Every production prompt has 4 parts: Role (who the AI is), Context (what data it has), Task (what to do), and Format (how to output it).',
+     code:'# SC supplier analysis prompt:\nsystem = """\nYou are a supply chain risk analyst with 15 years experience.\nYou analyze supplier data and produce structured risk assessments.\nAlways output valid JSON. Be precise and cite specific data points.\n"""\n\nuser = """\nSupplier data: {supplier_data}\n\nTask: Score this supplier on risk (1-10) across:\n- Financial stability\n- Delivery reliability  \n- Quality consistency\n- Geopolitical exposure\n\nOutput JSON: {risk_score, factors[], recommendation}\n"""'},
+    {h:'Few-shot examples',body:'Show the model 2–3 examples of exactly the input/output you want. This dramatically improves consistency — especially for structured SC outputs.',
+     bullets:['Include 2-3 real examples from your domain','Show edge cases (delayed supplier, missing data)','The model learns your specific scoring logic','Reduces hallucination by anchoring to real patterns']},
+    {h:'Chain-of-thought',body:'Adding "think step by step" or "reason through this carefully" before answering improves accuracy on complex tasks by 20–40%. Critical for SC analysis.',
+     code:'# Add to your prompts:\n"Before giving your final answer, reason through:\n1. What data do I have?\n2. What patterns do I see?\n3. What are the risks?\nThen provide your structured output."'},
+    {h:'Structured outputs',body:'For SC systems, you almost always want JSON, not prose. Modern APIs let you enforce a schema — the model MUST output valid JSON matching your structure.',
+     code:'# Claude API with forced JSON:\nresponse = client.messages.create(\n  model="claude-sonnet-4-5",\n  system="You are a SC analyst. Output only valid JSON.",\n  messages=[{"role":"user","content":prompt}]\n)'}
+   ],
+   sc_example:'For your SaaS, you\'ll have a library of prompts: one for supplier risk scoring, one for demand anomaly explanation, one for contract clause extraction, one for disruption impact analysis. Each is a precision tool.',
+   callout:'The single most impactful thing you can do this week: take one manual analysis you do today in your SC business, describe it precisely in a prompt, and test it with Claude API. You\'ll be shocked at the quality.'
+  }},
+
+ {id:'llm5',phase:1,week:2,name:'Temperature & sampling',preview:'Controlling randomness in AI outputs',badges:[{l:'Config',c:'#f07050',bg:'#2e1510'}],
+  content:{
+   intro:'Temperature controls how creative or deterministic your AI outputs are. It\'s one dial that massively affects output quality for different SC tasks.',
+   sections:[
+    {h:'The temperature spectrum',body:'',
+     bullets:['Temperature 0.0: Fully deterministic. Same input → same output every time. Use for: supplier scoring, data extraction, structured analysis','Temperature 0.3–0.5: Slight variation. Good for: report generation, summarization, recommendations','Temperature 0.7–1.0: Creative, varied. Use for: brainstorming risk scenarios, generating RFP questions','Temperature 1.0+: Highly random. Rarely useful for SC applications'],
+    },
+    {h:'Top-p (nucleus sampling)',body:'Works alongside temperature. Top-p = 0.9 means "only consider tokens that make up the top 90% probability mass". This prevents very unlikely (often wrong) outputs.',
+     code:'# SC platform settings:\n# Supplier risk scoring: temp=0, top_p=1\n# Demand report narrative: temp=0.4, top_p=0.9  \n# Disruption scenario planning: temp=0.7, top_p=0.95\n# Contract clause extraction: temp=0, top_p=1'},
+   ],
+   sc_example:'When extracting payment terms from a supplier contract, use temperature=0 (deterministic). When generating a narrative explanation of why a supplier is risky, use temperature=0.4 (natural, not robotic).',
+   callout:'Rule of thumb for SC: use temperature=0 for anything that touches numbers, dates, or structured data. Use temperature=0.3–0.5 for natural language explanations.'
+  }},
+
+ {id:'llm6',phase:1,week:2,name:'The Claude API in practice',preview:'Building your first SC AI call',badges:[{l:'Hands-on',c:'#00c896',bg:'#0a2e22'}],
+  content:{
+   intro:'The Claude API is your primary building block. It\'s a simple HTTP endpoint that takes messages and returns completions. Here\'s everything you need to make your first real SC AI call.',
+   sections:[
+    {h:'Installation and setup',body:'',
+     code:'# Install SDK\npip install anthropic\n\n# Set API key (get at console.anthropic.com)\nimport os\nos.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."\n\nimport anthropic\nclient = anthropic.Anthropic()'},
+    {h:'Your first SC analysis call',body:'',
+     code:'# Simple supplier risk analysis\nresponse = client.messages.create(\n    model="claude-sonnet-4-5",\n    max_tokens=1024,\n    system="You are a supply chain risk expert.",\n    messages=[\n        {\n            "role": "user",\n            "content": f"""\n            Analyze this supplier and give a risk score 1-10:\n            Name: {supplier_name}\n            Country: {country}\n            Lead time: {lead_time} days\n            On-time rate: {otif_rate}%\n            \n            Output JSON: {{risk_score, reasons[], action}}\n            """\n        }\n    ]\n)\nprint(response.content[0].text)'},
+    {h:'Tool use (for agents)',body:'Tool use lets the model call your functions. This is the foundation of your agentic SC platform.',
+     code:'tools = [{\n  "name": "get_supplier_data",\n  "description": "Fetch supplier metrics from database",\n  "input_schema": {\n    "type": "object",\n    "properties": {\n      "supplier_id": {"type":"string"}\n    }\n  }\n}]\n\nresponse = client.messages.create(\n  model="claude-sonnet-4-5",\n  tools=tools,\n  messages=[{"role":"user","content":"Analyze supplier SUP-001"}]\n)'}
+   ],
+   sc_example:'Connect this to your existing SaaS database. When a user asks "why is my OTIF dropping?", your system fetches the relevant shipment data, injects it into the prompt, and Claude returns a structured root-cause analysis.',
+   callout:'Start building this week. You don\'t need to understand the model internals. Treat it like a very smart API that reads text and returns text. Build your first SC prototype today.'
+  }},
+
+ {id:'emb1',phase:1,week:3,name:'What are embeddings?',preview:'Turning text into searchable numbers',badges:[{l:'Core concept',c:'#8b7cf6',bg:'#1a1630'}],
+  content:{
+   intro:'An embedding is a list of numbers (a vector) that represents the meaning of a piece of text. The magic: similar meanings produce similar vectors. "shipment delay" and "late delivery" will have vectors very close together in mathematical space.',
+   sections:[
+    {h:'How embeddings work',body:'An embedding model (separate from the LLM) reads text and outputs typically 1,536 numbers. These numbers capture semantic meaning — topics, sentiment, relationships.',
+     code:'from openai import OpenAI\nclient = OpenAI()\n\n# Generate embedding for SC text\nresponse = client.embeddings.create(\n    model="text-embedding-3-small",\n    input="Supplier in Vietnam has 15-day lead time"\n)\n\nvector = response.data[0].embedding\n# vector = [0.023, -0.156, 0.089, ...] 1536 numbers'},
+    {h:'Similarity search',body:'To find similar documents, compare vectors using cosine similarity. Score of 1.0 = identical meaning. Score near 0 = unrelated.',
+     code:'import numpy as np\n\ndef similarity(a, b):\n    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))\n\n# "late delivery" vs "shipment delayed" → ~0.89\n# "late delivery" vs "raw material cost" → ~0.12'},
+    {h:'Why this powers RAG',body:'Embeddings are what make RAG possible. You embed all your SC documents once, store the vectors, then at query time embed the question and find the most similar document chunks.',
+     bullets:['Embed your supplier docs, contracts, shipment history','User asks a question → embed the question','Find top-5 most similar chunks → retrieve them','Inject chunks into Claude\'s context → answer grounded in your data']}
+   ],
+   sc_example:'Embed all your supplier contracts. When a user asks "which contracts have force majeure clauses that cover port strikes?", the semantic search finds the relevant clauses even if exact words differ — because the meaning is similar.',
+   callout:'Best embedding model for price/performance: OpenAI text-embedding-3-small at $0.00002 per 1K tokens. For 10,000 supplier documents averaging 1,000 tokens each = ~$0.20 to embed your entire corpus.'
+  }},
+
+ {id:'emb2',phase:1,week:3,name:'Vector databases',preview:'Storing and searching millions of embeddings',badges:[{l:'Infrastructure',c:'#5090f0',bg:'#0f1e38'}],
+  content:{
+   intro:'A vector database stores embeddings and lets you search them by similarity at scale. Instead of "find rows where name = X", you ask "find the 10 vectors most similar to this query vector".',
+   sections:[
+    {h:'Top vector databases for SC',body:'',
+     bullets:['Pinecone: managed cloud, fastest to start, great for production SC apps. Free tier = 100K vectors','Chroma: open-source, runs locally, perfect for development and testing','Weaviate: open-source, good for complex filtering alongside vector search','pgvector: add vectors to your existing PostgreSQL — best if you already use Postgres'],
+    },
+    {h:'Getting started with Chroma (local)',body:'',
+     code:'pip install chromadb\n\nimport chromadb\nclient = chromadb.Client()\n\ncollection = client.create_collection("suppliers")\n\n# Add supplier documents\ncollection.add(\n    documents=["Supplier ABC, Vietnam, lead time 15 days..."],\n    ids=["supplier_abc"],\n    metadatas=[{"country":"Vietnam","category":"electronics"}]\n)\n\n# Query by meaning\nresults = collection.query(\n    query_texts=["supplier with long lead times"],\n    n_results=5\n)'},
+    {h:'Pinecone for production',body:'',
+     code:'import pinecone\n\npc = pinecone.Pinecone(api_key="your-key")\nindex = pc.Index("sc-suppliers")\n\n# Upsert with metadata\nindex.upsert(vectors=[\n    {"id": "sup_001",\n     "values": embedding_vector,\n     "metadata": {"country": "China", "risk": 7.2}}\n])\n\n# Semantic search with filter\nresults = index.query(\n    vector=query_embedding,\n    top_k=10,\n    filter={"risk": {"$gt": 5}}\n)'}
+   ],
+   sc_example:'Store every supplier profile, contract, shipment record, and news article as embeddings. Query: "which suppliers are in regions with recent geopolitical tension?" finds relevant docs even without exact keyword matching.',
+   callout:'For your SC SaaS: start with Chroma locally for development. Move to Pinecone when you have real users. If you\'re already on PostgreSQL, use pgvector and stay in one database.'
+  }},
+
+ {id:'rag1',phase:2,week:5,name:'RAG architecture',preview:'The most important pattern for your platform',badges:[{l:'Critical',c:'#00c896',bg:'#0a2e22'}],
+  content:{
+   intro:'RAG (Retrieval-Augmented Generation) is the pattern of fetching relevant information from your private data and injecting it into an LLM\'s context before answering. It\'s the most important concept for your SC AI platform — it\'s what gives the AI access to YOUR data without retraining.',
+   sections:[
+    {h:'The RAG pipeline',body:'5 stages: Load → Chunk → Embed → Store → Retrieve+Generate',
+     code:'# Full RAG pipeline overview:\n\n# 1. LOAD: ingest your SC documents\n   supplier_docs, contracts, shipment_logs\n\n# 2. CHUNK: split into pieces (500-1000 tokens)\n   contract_chunks = split(contract, size=500)\n\n# 3. EMBED: convert to vectors\n   vectors = embed_model(contract_chunks)\n\n# 4. STORE: save to vector DB\n   pinecone.upsert(vectors)\n\n# 5. RETRIEVE + GENERATE:\n   query_vec = embed(user_question)\n   relevant_chunks = pinecone.query(query_vec)\n   answer = claude(relevant_chunks + question)'},
+    {h:'Chunking strategies',body:'How you split documents dramatically affects RAG quality.',
+     bullets:['Fixed-size: split every 500 tokens (simple, works OK)','Sentence-aware: never split mid-sentence (better)','Semantic: split at topic boundaries (best, more complex)','Hierarchical: keep summary + chunks (best for long docs)','Overlap: keep 50-100 token overlap between chunks to preserve context across boundaries']},
+    {h:'Query optimization',body:'The user\'s raw question is often not the best search query.',
+     code:'# Query expansion example\noriginal = "why are costs going up?"\n\n# Generate better search queries:\nexpanded = [\n  "freight cost increase factors",\n  "supply chain cost drivers Q3",\n  "carrier rate increases logistics"\n]\n# Search with all 3, merge results, deduplicate'},
+   ],
+   sc_example:'Your SC platform RAG corpus: all supplier contracts (chunked by clause), shipment history (chunked by week/carrier), market reports (chunked by topic), your SaaS documentation. User asks anything → retrieve relevant context → Claude answers from YOUR data.',
+   callout:'RAG is better than fine-tuning for most SC use cases because: your data changes frequently, you can inspect what was retrieved, it\'s cheaper, and there\'s no risk of the model forgetting other knowledge.'
+  }},
+
+ {id:'rag2',phase:2,week:5,name:'LlamaIndex in practice',preview:'The best RAG framework for your SC data',badges:[{l:'Framework',c:'#8b7cf6',bg:'#1a1630'}],
+  content:{
+   intro:'LlamaIndex is the leading framework for building RAG applications. It handles document loading, chunking, embedding, indexing, and querying — letting you focus on your SC use case, not the plumbing.',
+   sections:[
+    {h:'Your first SC knowledge base',body:'',
+     code:'pip install llama-index\n\nfrom llama_index.core import VectorStoreIndex, SimpleDirectoryReader\nfrom llama_index.llms.anthropic import Anthropic\nfrom llama_index.embeddings.openai import OpenAIEmbedding\n\n# Load all your SC documents\ndocs = SimpleDirectoryReader("./sc_documents/").load_data()\n# Supports: PDF, Word, CSV, text files\n\n# Build index (embed + store automatically)\nindex = VectorStoreIndex.from_documents(\n    docs,\n    embed_model=OpenAIEmbedding(model="text-embedding-3-small")\n)\n\n# Query engine\nquery_engine = index.as_query_engine(\n    llm=Anthropic(model="claude-sonnet-4-5")\n)\n\n# Ask questions over YOUR data\nresponse = query_engine.query(\n    "Which suppliers have payment terms exceeding 60 days?"\n)\nprint(response)'},
+    {h:'Custom document loaders for SC',body:'LlamaIndex has loaders for everything in your SC stack.',
+     code:'from llama_index.readers.database import DatabaseReader\nfrom llama_index.readers.web import SimpleWebPageReader\n\n# Load from your database\nreader = DatabaseReader(engine=your_sqlalchemy_engine)\ndocs = reader.load_data(\n    query="SELECT * FROM supplier_scorecards WHERE date > \'2024-01-01\'"\n)\n\n# Load from Notion (if you use it for SOPs)\nfrom llama_index.readers.notion import NotionPageReader\nnotion_docs = NotionPageReader().load_data(page_ids=[...])'},
+    {h:'Production setup with Pinecone',body:'',
+     code:'from llama_index.vector_stores.pinecone import PineconeVectorStore\nfrom pinecone import Pinecone\n\npc = Pinecone(api_key="...")\npinecone_index = pc.Index("sc-knowledge-base")\n\nvector_store = PineconeVectorStore(pinecone_index=pinecone_index)\nstorage_context = StorageContext.from_defaults(vector_store=vector_store)\n\nindex = VectorStoreIndex.from_documents(\n    docs, storage_context=storage_context\n)'}
+   ],
+   sc_example:'Build a knowledge base from: your supplier contracts (PDF), shipment history (CSV from your database), market reports (PDFs), carrier agreements (Word docs). Query: "which contracts expire in the next 90 days and have auto-renewal clauses?"',
+   callout:'LlamaIndex is your Week 5 build project. By the end of that week you should have a working RAG system over your own SC documents. This is your platform\'s core intelligence layer.'
+  }},
+
+ {id:'ft1',phase:2,week:7,name:'Fine-tuning vs RAG',preview:'When to train, when to retrieve',badges:[{l:'Decision',c:'#f0a830',bg:'#2e1f08'}],
+  content:{
+   intro:'The most common question in building SC AI: should I fine-tune the model on my data, or use RAG? The answer depends on what you\'re trying to achieve. Most SC applications need RAG, not fine-tuning — but some need both.',
+   sections:[
+    {h:'Use RAG when...',body:'',
+     bullets:['Your data changes frequently (shipment records, prices, supplier status)','You need the AI to cite specific documents','You want to inspect what information was used','Your dataset is large (> 50MB of documents)','You need to answer questions about current data','You want to update the knowledge base without retraining'],
+    },
+    {h:'Use fine-tuning when...',body:'',
+     bullets:['You want the model to learn a specific output style or format consistently','Your domain has very specialized vocabulary not in the base model','You need faster inference (fine-tuned smaller models can be faster)','You want to teach specific reasoning patterns unique to your SC process','You have high-quality labeled examples (1,000+ input/output pairs)'],
+    },
+    {h:'For your SC SaaS: probably RAG first',body:'Your SC data is dynamic (shipments, prices, supplier scores change daily). RAG handles this perfectly. Fine-tune LATER if you find the model needs to learn your company\'s specific scoring methodology or report format.',
+     code:'# Fine-tuning data format (JSONL):\n{"messages": [\n  {"role":"system","content":"You are a SC risk analyst for AcmeCo..."},\n  {"role":"user","content":"Supplier: FastShip Ltd. Country: China. OTIF: 72%. Lead time: 45 days."},\n  {"role":"assistant","content":\'{"risk_score":7.8,"level":"HIGH","primary_factor":"OTIF below threshold","recommendation":"Dual-source within 60 days"}\'}\n]}\n# Need 500-1000+ of these examples for good results'}
+   ],
+   sc_example:'Start with RAG for all your knowledge-based Q&A. Fine-tune later if you find your risk scoring outputs are inconsistent or don\'t match your company\'s specific methodology. Many successful SC AI platforms never fine-tune.',
+   callout:'The honest advice: build RAG first. Ship it. Get real user feedback. Fine-tune only if RAG isn\'t giving you the quality you need for a specific task. Don\'t over-engineer before you have users.'
+  }},
+
+ {id:'ft2',phase:2,week:7,name:'LoRA & fine-tuning basics',preview:'Efficient model customization',badges:[{l:'Advanced',c:'#f07050',bg:'#2e1510'}],
+  content:{
+   intro:'If you decide to fine-tune, LoRA (Low-Rank Adaptation) is the technique that makes it affordable. Instead of updating all billions of parameters, LoRA adds a small set of trainable parameters alongside the frozen original model.',
+   sections:[
+    {h:'How LoRA works',body:'Imagine the original model weights as a huge 10,000×10,000 matrix. LoRA instead trains two small matrices (10,000×16 and 16×10,000) whose product approximates the change needed. This is ~1000x fewer parameters to train.',
+     bullets:['Original model: ~7 billion parameters (frozen, unchanged)','LoRA adapters: ~10 million parameters (trained on your data)','Training cost: hours on a single A100 GPU ($10-50 via RunPod)','Result: a "delta" file you apply to the base model at inference time']},
+    {h:'QLoRA: fine-tuning on consumer hardware',body:'QLoRA combines LoRA with 4-bit quantization — compressing the model to use 4x less memory. You can fine-tune a 7B parameter model on a single RTX 3090 GPU.',
+     code:'# Using Hugging Face + PEFT for LoRA training:\nfrom transformers import AutoModelForCausalLM, AutoTokenizer\nfrom peft import LoraConfig, get_peft_model\n\nmodel = AutoModelForCausalLM.from_pretrained(\n    "mistralai/Mistral-7B-v0.1",\n    load_in_4bit=True  # QLoRA\n)\n\nlora_config = LoraConfig(\n    r=16,  # rank (lower = fewer params)\n    lora_alpha=32,\n    target_modules=["q_proj","v_proj"],\n    lora_dropout=0.1,\n    task_type="CAUSAL_LM"\n)\n\nmodel = get_peft_model(model, lora_config)'},
+    {h:'Alternatives: OpenAI & Anthropic fine-tuning',body:'Both OpenAI and Anthropic offer managed fine-tuning — upload your JSONL dataset and they handle the training. More expensive per inference but zero infrastructure.',
+     code:'# OpenAI fine-tuning API:\nfrom openai import OpenAI\nclient = OpenAI()\n\njob = client.fine_tuning.jobs.create(\n    training_file="file-abc123",  # your JSONL\n    model="gpt-4o-mini"\n)\nprint(job.fine_tuned_model)  # your custom model ID'}
+   ],
+   sc_example:'A fine-tuned SC model knows your specific supplier tier definitions, your OTIF calculation methodology, your risk scoring rubric, and outputs in exactly your JSON schema — without lengthy system prompts.',
+   callout:'For your 90-day sprint: skip fine-tuning. Build RAG. If by month 3 you\'re getting complaints about output format consistency, then add fine-tuning. It\'s a month 4+ activity.'
+  }},
+
+ {id:'agent1',phase:3,week:9,name:'What is an AI agent?',preview:'LLMs that take actions in the world',badges:[{l:'Core',c:'#00c896',bg:'#0a2e22'}],
+  content:{
+   intro:'An AI agent is an LLM that can take actions — call APIs, search the web, write to databases, run calculations — in a loop until a goal is achieved. This is the core of your agentic SC platform.',
+   sections:[
+    {h:'The agent loop',body:'Agents work in a think → act → observe → think cycle called the ReAct pattern (Reasoning + Acting).',
+     code:'# Pseudo-code of an agent loop:\nwhile not goal_achieved:\n    # THINK: LLM reasons about current state\n    thought = llm("Current state: {state}. What should I do next?")\n    \n    # ACT: call a tool based on reasoning\n    if thought.includes("need supplier data"):\n        result = get_supplier_data(supplier_id)\n    elif thought.includes("check freight rates"):\n        result = get_freight_rates(origin, destination)\n    \n    # OBSERVE: add result to context\n    state.append(result)\n    \n    # Loop: LLM now has more info to reason with'},
+    {h:'Tools / function calling',body:'Tools are functions you define that the agent can call. The LLM reads your tool descriptions and decides when and how to call them.',
+     code:'# Define SC tools for Claude:\ntools = [\n  {\n    "name": "get_supplier_risk",\n    "description": "Get current risk score for a supplier",\n    "input_schema": {\n      "type": "object",\n      "properties": {\n        "supplier_id": {"type": "string"},\n        "include_history": {"type": "boolean"}\n      },\n      "required": ["supplier_id"]\n    }\n  },\n  {\n    "name": "search_news",\n    "description": "Search for news about a supplier or region",\n    "input_schema": {"type":"object","properties":{"query":{"type":"string"}}}\n  },\n  {\n    "name": "update_risk_score",\n    "description": "Update a supplier risk score in the database",\n    "input_schema": {"type":"object","properties":{"supplier_id":{"type":"string"},"score":{"type":"number"}}}\n  }\n]'},
+    {h:'Memory types',body:'Agents need memory to work across a multi-step task.',
+     bullets:['In-context memory: conversation history in the prompt (limited by context window)','External memory: write facts to a database, retrieve them later','Episodic memory: logs of past actions and outcomes','Semantic memory: your RAG knowledge base']}
+   ],
+   sc_example:'A supplier risk monitoring agent: (1) reads your supplier list, (2) searches news for each supplier\'s region, (3) checks freight rates on their shipping lanes, (4) cross-references with your OTIF history, (5) updates risk scores, (6) sends Slack alert for any score > 8. Runs automatically every morning.',
+   callout:'This is where your SaaS transforms. Instead of your users manually checking suppliers, your agents do it proactively. This is the AI feature that justifies premium pricing.'
+  }},
+
+ {id:'agent2',phase:3,week:10,name:'Multi-agent systems',preview:'Orchestrating specialized AI workers',badges:[{l:'Advanced',c:'#8b7cf6',bg:'#1a1630'}],
+  content:{
+   intro:'Complex SC tasks need multiple specialized agents working together: an orchestrator that plans, and worker agents that execute specific tasks. LangGraph is the best framework for building these systems.',
+   sections:[
+    {h:'Orchestrator + worker pattern',body:'',
+     bullets:['Orchestrator agent: receives the high-level goal, breaks it into subtasks, delegates to workers, synthesizes results','Worker agents: each specialized in one domain (supplier data, logistics, news, forecasting)','This mirrors how a SC team works: manager delegates to analysts who specialize'],
+    },
+    {h:'LangGraph for SC agent networks',body:'LangGraph models your agent network as a graph where nodes are agents/tools and edges are data flows.',
+     code:'from langgraph.graph import StateGraph, END\nfrom langchain_anthropic import ChatAnthropic\n\n# Define state\nclass SCState(TypedDict):\n    task: str\n    supplier_data: dict\n    risk_score: float\n    news_results: list\n    final_report: str\n\n# Build agent graph\nworkflow = StateGraph(SCState)\n\n# Add agent nodes\nworkflow.add_node("orchestrator", orchestrator_agent)\nworkflow.add_node("supplier_analyst", supplier_agent)\nworkflow.add_node("news_monitor", news_agent)\nworkflow.add_node("risk_scorer", scoring_agent)\nworkflow.add_node("report_writer", report_agent)\n\n# Add edges (data flow)\nworkflow.add_edge("orchestrator", "supplier_analyst")\nworkflow.add_edge("orchestrator", "news_monitor")\nworkflow.add_edge("supplier_analyst", "risk_scorer")\nworkflow.add_edge("news_monitor", "risk_scorer")\nworkflow.add_edge("risk_scorer", "report_writer")\nworkflow.add_edge("report_writer", END)\n\napp = workflow.compile()'},
+    {h:'Your SC platform agents',body:'',
+     bullets:['Supplier risk agent: monitors OTIF, news, geopolitics per supplier','Demand sensing agent: detects demand anomalies using your order data','Disruption monitor: scans news, port data, weather for your lanes','Procurement intelligence: analyzes quotes, suggests alternatives','OTIF root cause agent: traces delivery failures to causes']}
+   ],
+   sc_example:'User asks: "Give me a full risk briefing for our Asia-Pacific suppliers". The orchestrator dispatches 4 agents in parallel. 60 seconds later it synthesizes their findings into a structured briefing. What used to take a team of analysts half a day takes one minute.',
+   callout:'LangGraph is your Month 3 Week 10 project. Build one simple 3-node graph first (orchestrator → analyst → reporter). Then expand from there.'
+  }},
+
+ {id:'agent3',phase:3,week:11,name:'Connecting SC APIs',preview:'Making agents interact with real systems',badges:[{l:'Integration',c:'#f07050',bg:'#2e1510'}],
+  content:{
+   intro:'The power of your SC agent platform comes from connecting to real data sources. Agents that can pull live freight rates, search supplier news, query your ERP, and update your database create genuine automation.',
+   sections:[
+    {h:'Essential SC API integrations',body:'',
+     bullets:['Freight rates: Freightos API, Flexport API (live ocean/air rates)','Port data: Marine Traffic API (vessel tracking, port congestion)','News: NewsAPI, Perplexity API (supplier/region news)','Weather: OpenWeatherMap (disruption risk by location)','ERP: your existing SAP/Oracle/NetSuite connector','Web search: Brave Search API, Tavily (for agent web access)'],
+    },
+    {h:'Building tool functions',body:'',
+     code:'import requests\n\ndef get_freight_rate(origin_port: str, dest_port: str, container_type: str) -> dict:\n    """Get live freight rate from Freightos API"""\n    response = requests.get(\n        "https://api.freightos.com/rates",\n        params={\n            "origin": origin_port,\n            "destination": dest_port,\n            "container": container_type\n        },\n        headers={"Authorization": f"Bearer {FREIGHTOS_KEY}"}\n    )\n    return response.json()\n\ndef search_supplier_news(supplier_name: str, days_back: int = 7) -> list:\n    """Search recent news about a supplier"""\n    response = requests.get(\n        "https://newsapi.org/v2/everything",\n        params={\n            "q": f\'"{supplier_name}" supply chain\',\n            "from": (datetime.now() - timedelta(days=days_back)).isoformat(),\n            "sortBy": "relevancy"\n        },\n        headers={"X-Api-Key": NEWSAPI_KEY}\n    )\n    return response.json()["articles"][:5]'},
+    {h:'Connecting to your own SaaS database',body:'',
+     code:'import sqlalchemy\n\ndef get_supplier_otif(supplier_id: str, months: int = 3) -> dict:\n    """Fetch OTIF data from your SaaS database"""\n    with engine.connect() as conn:\n        result = conn.execute(\n            text("""\n            SELECT \n                supplier_id,\n                AVG(on_time_delivery) as otif_rate,\n                COUNT(*) as order_count,\n                AVG(days_late) as avg_days_late\n            FROM shipments\n            WHERE supplier_id = :sid\n            AND created_at > NOW() - INTERVAL \'3 months\'\n            GROUP BY supplier_id\n            """),\n            {"sid": supplier_id}\n        )\n    return dict(result.fetchone()._mapping)'}
+   ],
+   sc_example:'An agent that monitors your 50 key suppliers: every morning it pulls latest OTIF from your database, gets news via NewsAPI, checks port congestion for their origin ports, calculates updated risk scores, and pushes a Slack digest to your team. Zero human effort.',
+   callout:'Build these integrations incrementally. Start with just your own database (Week 11, Day 1). Add news search (Day 2). Add freight rates (Day 3). Each addition makes your agents dramatically more powerful.'
+  }},
+
+ {id:'mlops1',phase:3,week:12,name:'LLM observability & evals',preview:'Knowing when your AI is wrong',badges:[{l:'Production',c:'#5090f0',bg:'#0f1e38'}],
+  content:{
+   intro:'The most dangerous thing in a SC AI system is silent failure — the AI gives a wrong answer confidently and nobody catches it. LLM observability is the practice of monitoring every AI call to catch mistakes, track quality, and improve over time.',
+   sections:[
+    {h:'What to track',body:'',
+     bullets:['Latency: how long each AI call takes','Token usage & cost: per call, per user, per feature','Output quality: are answers correct? cited correctly?','Error rate: API failures, timeout, rate limits','User feedback: thumbs up/down, follow-up corrections','Retrieval quality: are the right chunks being retrieved in RAG?'],
+    },
+    {h:'LangSmith setup',body:'LangSmith is Anthropic-compatible and gives you a dashboard for every LLM call.',
+     code:'import os\nos.environ["LANGCHAIN_API_KEY"] = "ls__..."\nos.environ["LANGCHAIN_TRACING_V2"] = "true"\nos.environ["LANGCHAIN_PROJECT"] = "sc-ai-platform"\n\n# Now ALL your LangChain/LlamaIndex calls are traced\n# Go to smith.langchain.com to see every call'},
+    {h:'RAGAS: evaluating your RAG pipeline',body:'RAGAS gives you automated scores for RAG quality — no manual labeling needed.',
+     code:'from ragas import evaluate\nfrom ragas.metrics import (\n    faithfulness,      # Is the answer grounded in retrieved docs?\n    answer_relevancy,  # Does the answer address the question?\n    context_precision, # Are retrieved chunks relevant?\n    context_recall     # Were all relevant chunks retrieved?\n)\n\n# Evaluate on 50 question-answer pairs\nresult = evaluate(\n    dataset=your_eval_dataset,\n    metrics=[faithfulness, answer_relevancy, context_precision]\n)\nprint(result.to_pandas())'},
+   ],
+   sc_example:'A supplier risk score that was wrong by 2 points due to a data retrieval error costs your user a bad procurement decision. Observability catches this: low faithfulness score = answer not grounded in retrieved data = investigation needed.',
+   callout:'Set up LangSmith on Day 1 of Month 3. Every SC AI system in production needs observability. It\'s free for hobbyist usage and cheap for startups. No excuses.'
+  }},
+];
+
+const RESOURCES = [
+  {id:'r1',title:'Intro to Large Language Models',src:'Andrej Karpathy · YouTube',ico:'▶',icobg:'#2e1f08',url:'https://www.youtube.com/watch?v=zjkBMFhNj_g',desc:'The single best 1-hour explanation of what LLMs are. Watch this on Day 1 — no math required. Karpathy was VP of AI at Tesla and co-founded OpenAI.',tags:['free','video','must'],week:'Week 1'},
+  {id:'r2',title:"Let's build GPT from scratch",src:'Andrej Karpathy · YouTube',ico:'▶',icobg:'#2e1f08',url:'https://www.youtube.com/watch?v=7xTGNNLPyMI',desc:'Build a transformer in pure Python. Watch Week 1–2. You\'ll understand transformers forever after this.',tags:['free','video','must'],week:'Week 1–2'},
+  {id:'r3',title:'Prompt Engineering for Developers',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/',desc:'2-hour course on system prompts, few-shot, chain-of-thought, and iterative prompting. Week 2 core material.',tags:['free','course','must'],week:'Week 2'},
+  {id:'r4',title:'Building Systems with LLM APIs',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/building-systems-with-chatgpt/',desc:'Pipeline thinking, classification, evaluation. Teaches you to chain prompts — critical for SC automation.',tags:['free','course'],week:'Week 3'},
+  {id:'r5',title:'LangChain: Chat with Your Data',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/langchain-chat-with-your-data/',desc:'Full RAG pipeline: load, split, embed, store, retrieve, generate. Most directly relevant to your SC data platform. Week 5 core.',tags:['free','course','must'],week:'Week 5'},
+  {id:'r6',title:'Agentic RAG with LlamaIndex',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/building-agentic-rag-with-llamaindex/',desc:'RAG agents that decide when to search, when to reason. Week 6 material.',tags:['free','course'],week:'Week 6'},
+  {id:'r7',title:'Fine-tuning Large Language Models',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/finetuning-large-language-models/',desc:'When to fine-tune, data preparation, LoRA concepts. Week 7 core.',tags:['free','course'],week:'Week 7'},
+  {id:'r8',title:'AI Agents in LangGraph',src:'DeepLearning.ai · Free',ico:'📘',icobg:'#0f1e38',url:'https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/',desc:'Multi-agent orchestration, stateful graphs, human-in-the-loop. Week 10 core.',tags:['free','course','must'],week:'Week 10'},
+  {id:'r9',title:'Claude API Documentation',src:'docs.anthropic.com',ico:'📄',icobg:'#0a2e22',url:'https://docs.anthropic.com',desc:'Your primary API reference. Tool use, vision, prompt caching, streaming, Claude models. Bookmark this — you\'ll live here.',tags:['free','docs','must'],week:'All'},
+  {id:'r10',title:'LlamaIndex Documentation',src:'docs.llamaindex.ai',ico:'📄',icobg:'#0a2e22',url:'https://docs.llamaindex.ai',desc:'Best RAG framework. Data connectors, indexing, query engines, agents. Use for your SC knowledge base.',tags:['free','docs'],week:'Week 5–6'},
+  {id:'r11',title:'LangChain Python Docs',src:'python.langchain.com',ico:'📄',icobg:'#0a2e22',url:'https://python.langchain.com/docs',desc:'LangGraph (agent graphs) is the part you\'ll use most. Reference alongside LlamaIndex.',tags:['free','docs'],week:'Week 9–10'},
+  {id:'r12',title:'Pinecone Documentation',src:'docs.pinecone.io',ico:'📄',icobg:'#0a2e22',url:'https://docs.pinecone.io',desc:'Managed vector DB for production. Free tier covers most early-stage SC platforms.',tags:['free','docs'],week:'Week 5'},
+  {id:'r13',title:'Building Effective Agents',src:'Anthropic Research Blog',ico:'📋',icobg:'#1a1630',url:'https://www.anthropic.com/research/building-effective-agents',desc:'Anthropic\'s own patterns for agent design. Short, dense, required reading before building agents.',tags:['free','must'],week:'Week 8'},
+  {id:'r14',title:'RAGAS Evaluation Framework',src:'docs.ragas.io',ico:'📄',icobg:'#0a2e22',url:'https://docs.ragas.io',desc:'Automated RAG evaluation: faithfulness, answer relevancy, context precision. Week 8 essential.',tags:['free','docs'],week:'Week 8'},
+  {id:'r15',title:'LangSmith Observability',src:'docs.smith.langchain.com',ico:'📄',icobg:'#0a2e22',url:'https://docs.smith.langchain.com',desc:'Trace, debug, evaluate LLM apps. Every production SC AI needs this.',tags:['free','docs'],week:'Week 12'},
+];
+
+const GLOSSARY = [
+  {t:'LLM (Large Language Model)',d:'A neural network trained on massive text data that can generate, understand, and reason with language. GPT-4, Claude, Gemini are LLMs. For your SC platform, LLMs are the reasoning engine — the brain that understands your questions and generates insights.',e:'SC use: Claude reads your supplier contract and extracts all payment terms in seconds.'},
+  {t:'Transformer',d:'The neural network architecture behind all modern LLMs, invented in 2017. Uses "attention" to understand relationships between any two words simultaneously, regardless of how far apart they are in a document.',e:'SC use: Can connect "delivery clause" on page 2 to "force majeure" on page 47 of a contract.'},
+  {t:'Token',d:'The unit LLMs read and generate. Roughly 3–4 characters or ¾ of a word. APIs charge per token. "supply chain" = 3 tokens. Context window limits and costs are all measured in tokens.',e:'SC use: A 20-page supplier contract ≈ 10,000 tokens ≈ $0.03 to analyze with Claude.'},
+  {t:'Context window',d:'The maximum number of tokens an LLM can process in one call — its working memory. Claude supports up to 200,000 tokens (~150 pages). Bigger context = more documents you can analyze at once.',e:'SC use: Feed 50 supplier scorecards simultaneously for comparative analysis.'},
+  {t:'Embedding',d:'Converting text into a list of numbers (a vector) that captures its meaning. Similar-meaning texts produce similar vectors. Foundation of semantic search and RAG.',e:'SC use: "late delivery" and "shipment delay" produce similar embeddings — your search finds both.'},
+  {t:'Vector database',d:'A database optimized for storing and searching embeddings by similarity. Instead of exact keyword matches, find documents with similar meaning. Pinecone, Chroma, Weaviate, pgvector.',e:'SC use: Store every supplier document as a vector; query "which suppliers have delivery penalties?" to find relevant contract clauses.'},
+  {t:'RAG (Retrieval-Augmented Generation)',d:'Fetching relevant information from your private data and injecting it into an LLM\'s context before generating an answer. Gives the AI access to YOUR data without retraining the model.',e:'SC use: User asks about a supplier → retrieve their profile + recent shipments → Claude answers using YOUR data.'},
+  {t:'Chunking',d:'Splitting large documents into smaller pieces before embedding them. Critical for RAG quality — too large loses precision, too small loses context. Typical chunk size: 500–1,000 tokens with 100-token overlap.',e:'SC use: Split a 100-page freight contract into 200 chunks of 500 tokens each for precise retrieval.'},
+  {t:'Semantic search',d:'Finding documents by meaning rather than exact keywords. "delivery delay risk" finds documents about "late shipment" even if those exact words don\'t appear.',e:'SC use: Search your knowledge base for "supplier financial instability" and find documents mentioning "cash flow issues" and "payment delays".'},
+  {t:'Fine-tuning',d:'Further training a pre-trained LLM on your own dataset to adjust its behavior, style, or knowledge. More expensive than RAG but can produce very consistent domain-specific outputs.',e:'SC use: Train on 1,000 examples of your supplier risk scoring methodology so the model always scores using your exact rubric.'},
+  {t:'LoRA (Low-Rank Adaptation)',d:'A technique to fine-tune large models cheaply by training only a tiny fraction of extra parameters (~1% of the full model). Makes fine-tuning accessible on consumer hardware.',e:'SC use: Fine-tune a 7B model on your SC data using a $50 RunPod session instead of needing $10,000 of cloud compute.'},
+  {t:'Temperature',d:'Controls output randomness. 0 = deterministic (same answer every time). 1 = creative/varied. Use 0 for data extraction, 0.3–0.5 for report writing, 0.7 for brainstorming.',e:'SC use: Temperature=0 for contract clause extraction. Temperature=0.4 for writing supplier risk narratives.'},
+  {t:'System prompt',d:'Instructions given to the LLM before the user\'s message. Defines its role, constraints, output format, and personality. Your primary way to "program" the AI\'s behavior.',e:'SC use: "You are a supply chain risk analyst. Always output valid JSON. Never make up data. Cite your sources."'},
+  {t:'AI agent',d:'An LLM that can take actions — call APIs, search the web, write to databases, run calculations — in a loop until a goal is achieved. The foundation of your agentic SC platform.',e:'SC use: An agent that monitors 50 suppliers, checks news, fetches OTIF data, updates risk scores, and sends alerts — automatically every morning.'},
+  {t:'Tool use / Function calling',d:'The ability to give an LLM tools it can invoke (your APIs, databases, web search). The LLM decides when and which tools to use. Claude\'s native capability.',e:'SC use: Give Claude tools: get_supplier_data(), check_port_congestion(), search_news(). It orchestrates them to answer complex questions.'},
+  {t:'ReAct pattern',d:'Reason + Act. The agent thinks about what to do, takes an action (tool call), observes the result, then thinks again. Repeats until the task is complete.',e:'SC use: Think: "I need OTIF data" → Act: call get_otif() → Observe: "OTIF is 68%" → Think: "That\'s below threshold, check news" → Act: search_news("supplier X")'},
+  {t:'Multi-agent system',d:'Multiple specialized AI agents working together, coordinated by an orchestrator. Each agent is an expert in one domain. More powerful and maintainable than one massive agent.',e:'SC use: Orchestrator → Supplier Agent + Logistics Agent + News Agent + Forecasting Agent → Synthesis Agent → Report.'},
+  {t:'LangGraph',d:'A Python library for building stateful multi-agent applications as graphs. Each node is an agent or tool; edges define data flow. Best framework for complex SC agent workflows.',e:'SC use: Build a SC risk graph: fetch data → analyze → cross-reference news → score → report.'},
+  {t:'MCP (Model Context Protocol)',d:'Anthropic\'s standard for connecting AI models to external data sources and tools. Plug your SC APIs in once using a standard interface.',e:'SC use: Connect your ERP, WMS, and supplier portal to Claude via MCP once — then any agent can use them.'},
+  {t:'Hallucination',d:'When an LLM confidently states something false. The main quality risk in SC AI. RAG grounding, low temperature, and output verification help prevent this.',e:'SC use: Without grounding, an LLM might invent a supplier\'s OTIF rate. With RAG, it only states what\'s in your actual data.'},
+  {t:'OTIF',d:'On-Time In-Full. The percentage of orders delivered on time and with the complete quantity ordered. A core SC KPI your AI can monitor, explain anomalies, and predict future performance.',e:'SC use: Agent detects OTIF drop from 94% to 81%, cross-references carrier data and weather events, produces root-cause report.'},
+  {t:'LangSmith',d:'A platform for tracing, debugging, and evaluating LLM applications. Records every prompt, response, tool call, and error. Essential for production SC AI.',e:'SC use: Catch when your supplier risk scorer is using wrong data chunks. Fix before users notice.'},
+  {t:'RAGAS',d:'An evaluation framework for RAG pipelines. Scores faithfulness (is the answer grounded in retrieved docs?), answer relevancy, context precision, and recall.',e:'SC use: Automatically test your SC knowledge base Q&A quality on 100 sample questions each week.'},
+  {t:'Chunking overlap',d:'Keeping the last N tokens of one chunk as the beginning of the next. Prevents information from being lost at chunk boundaries.',e:'SC use: Overlap ensures a clause that spans the boundary between two chunks is captured in both — not missed by retrieval.'},
+  {t:'Hybrid search',d:'Combining semantic (vector) search with keyword (BM25) search. Gets the best of both: meaning AND exact term matching.',e:'SC use: "ISO 9001 certified supplier in Vietnam" — hybrid search finds documents mentioning ISO 9001 AND suppliers in Vietnam.'},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const SK = 'scai2';
+function loadState(){try{return JSON.parse(localStorage.getItem(SK))||{done:{}};}catch(e){return{done:{}};}}
+function saveState(s){try{localStorage.setItem(SK,JSON.stringify(s));}catch(e){}}
+let S = loadState();
+
+function markDone(id){S.done[id]=true;saveState(S);updateStats();}
+function toggleDone(id){S.done[id]=!S.done[id];saveState(S);updateStats();}
+function isDone(id){return !!S.done[id];}
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('main-content').scrollTop=0;
+}
+
+// ═══════════════════════════════════════════
+// RENDER LEARN LIST
+// ═══════════════════════════════════════════
+function renderLearn(){
+  const phases=[
+    {n:1,label:'Month 1 — AI + LLM foundations',meta:'Weeks 1–4',color:'var(--teal)',bg:'var(--teal-dim)'},
+    {n:2,label:'Month 2 — RAG, embeddings & fine-tuning',meta:'Weeks 5–8',color:'var(--purple)',bg:'var(--purple-dim)'},
+    {n:3,label:'Month 3 — Agentic AI & build',meta:'Weeks 9–12',color:'var(--coral)',bg:'var(--coral-dim)'},
+  ];
+  let html='';
+  phases.forEach(ph=>{
+    const topics=TOPICS.filter(t=>t.phase===ph.n);
+    html+=`<div class="phase-card" id="ph${ph.n}">
+      <div class="phase-head" onclick="togglePhase(${ph.n})">
+        <div class="phase-num" style="background:${ph.bg};color:${ph.color}">M${ph.n}</div>
+        <div class="phase-txt">
+          <div class="phase-title">${ph.label}</div>
+          <div class="phase-meta">${ph.meta} · ${topics.length} topics</div>
+        </div>
+        <div class="phase-arrow">⌄</div>
+      </div>
+      <div class="phase-body">`;
+    topics.forEach(t=>{
+      const done=isDone(t.id);
+      const badges=t.badges.map(b=>`<span class="tbadge" style="background:${b.bg};color:${b.c}">${b.l}</span>`).join('');
+      html+=`<div class="topic-item" onclick="openTopic('${t.id}')">
+        <div class="topic-dot ${done?'done':''}"></div>
+        <div class="topic-info">
+          <div class="topic-name">${t.name}</div>
+          <div class="topic-preview">${t.preview}</div>
+          <div class="topic-badges">${badges}${done?'<span class="tbadge" style="background:var(--teal-dim);color:var(--teal)">✓ Done</span>':''}</div>
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('learn-list').innerHTML=html;
+  document.getElementById('ph1').classList.add('open');
+}
+
+function togglePhase(n){
+  const el=document.getElementById('ph'+n);
+  el.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════
+// TOPIC DETAIL
+// ═══════════════════════════════════════════
+function openTopic(id){
+  const t=TOPICS.find(x=>x.id===id);
+  if(!t)return;
+  document.getElementById('detail-title').textContent=t.name;
+  const c=t.content;
+  let html=`<div class="detail-section"><p>${c.intro}</p></div>`;
+  c.sections.forEach(s=>{
+    html+=`<div class="detail-section"><h2>${s.h}</h2>`;
+    if(s.body)html+=`<p>${s.body}</p>`;
+    if(s.bullets){html+='<ul>';s.bullets.forEach(b=>html+=`<li>${b}</li>`);html+='</ul>';}
+    if(s.code)html+=`<div class="code-block"><code>${escHtml(s.code)}</code></div>`;
+    html+='</div>';
+  });
+  if(c.sc_example){
+    html+=`<div class="sc-example"><div class="label">Supply chain example</div><p>${c.sc_example}</p></div>`;
+  }
+  if(c.callout){
+    html+=`<div class="callout"><p><strong>Key takeaway:</strong> ${c.callout}</p></div>`;
+  }
+  const done=isDone(t.id);
+  html+=`<button class="complete-btn ${done?'done':''}" id="completeBtn" onclick="completeTopic('${t.id}')">${done?'✓ Completed — tap to undo':'Mark as complete'}</button>`;
+  html+='<div style="height:40px"></div>';
+  document.getElementById('detail-body').innerHTML=html;
+  document.getElementById('detail-body').scrollTop=0;
+  document.getElementById('topic-detail').classList.add('show');
+}
+
+function completeTopic(id){
+  toggleDone(id);
+  const done=isDone(id);
+  const btn=document.getElementById('completeBtn');
+  if(btn){btn.textContent=done?'✓ Completed — tap to undo':'Mark as complete';btn.classList.toggle('done',done);}
+  renderLearn();
+  updateStats();
+}
+
+function closeTopic(){
+  document.getElementById('topic-detail').classList.remove('show');
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ═══════════════════════════════════════════
+// RESOURCES
+// ═══════════════════════════════════════════
+function renderResources(){
+  let html='';
+  RESOURCES.forEach(r=>{
+    const tags=r.tags.map(t=>{
+      const map={free:'rtag-free',paid:'rtag-paid',video:'rtag-video',course:'rtag-video',docs:'rtag-docs',must:'rtag-must'};
+      const label={free:'Free',paid:'Paid',video:'Video',course:'Course',docs:'Docs',must:'Must-do'};
+      return`<span class="rtag ${map[t]||'rtag-free'}">${label[t]||t}</span>`;
+    }).join('');
+    const weekTag=r.week?`<span class="rtag rtag-week">${r.week}</span>`:'';
+    html+=`<a class="res-card" href="${r.url}" target="_blank" data-tags="${r.tags.join(',')}">
+      <div class="res-top">
+        <div class="res-ico" style="background:${r.icobg}">${r.ico}</div>
+        <div class="res-meta">
+          <div class="res-title">${r.title}</div>
+          <div class="res-src">${r.src}</div>
+        </div>
+      </div>
+      <div class="res-desc">${r.desc}</div>
+      <div class="res-tags">${tags}${weekTag}</div>
+    </a>`;
+  });
+  document.getElementById('resList').innerHTML=html;
+}
+
+let activeFilter='all';
+function filterRes(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.rfil').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.res-card').forEach(card=>{
+    const tags=card.dataset.tags||'';
+    if(f==='all'){card.style.display='';}
+    else if(f==='must'){card.style.display=tags.includes('must')?'':'none';}
+    else if(f==='video'){card.style.display=(tags.includes('video')||tags.includes('course'))?'':'none';}
+    else{card.style.display=tags.includes(f)?'':'none';}
+  });
+}
+
+// ═══════════════════════════════════════════
+// GLOSSARY
+// ═══════════════════════════════════════════
+function renderGlossary(){
+  let html='';
+  GLOSSARY.forEach(g=>{
+    html+=`<div class="glos-item">
+      <div class="glos-term">${g.t}</div>
+      <div class="glos-def">${g.d}</div>
+      <div class="glos-example">${g.e}</div>
+    </div>`;
+  });
+  document.getElementById('glosList').innerHTML=html;
+}
+
+function filterGlos(q){
+  const term=q.toLowerCase();
+  document.querySelectorAll('.glos-item').forEach(el=>{
+    el.style.display=el.textContent.toLowerCase().includes(term)?'':'none';
+  });
+}
+
+// ═══════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════
+function updateStats(){
+  const total=TOPICS.length;
+  const done=Object.values(S.done).filter(Boolean).length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById('overallPct').textContent=pct+'%';
+  document.getElementById('overallBar').style.width=pct+'%';
+  document.getElementById('sTopics').textContent=done;
+  document.getElementById('xpBadge').textContent=done+' / '+total+' done';
+
+  [1,2,3].forEach(m=>{
+    const mt=TOPICS.filter(t=>t.phase===m);
+    const md=mt.filter(t=>isDone(t.id)).length;
+    const mpct=Math.round((md/mt.length)*100);
+    document.getElementById('m'+m+'p').textContent=mpct+'%';
+    document.getElementById('m'+m+'b').style.width=mpct+'%';
+  });
+}
+
+// ═══════════════════════════════════════════
+// AI CHAT
+// ═══════════════════════════════════════════
+const SYSTEM=`You are an expert supply chain AI tutor and platform architect. The user is an experienced supply chain SaaS founder who has zero AI/ML background but is building an agentic AI platform for supply chain management. They are on a 90-day fast-track learning plan.
+
+Your role:
+- Explain AI/ML/LLM concepts clearly using supply chain analogies and examples
+- Give practical, actionable answers focused on building their SC AI platform
+- Reference real code examples, specific APIs, and frameworks when relevant
+- Be direct and opinionated — recommend specific tools and approaches
+- Assume they understand supply chain deeply but explain all AI concepts from scratch
+- Connect every concept to a concrete supply chain use case
+
+The user's context:
+- Already has a working SC SaaS product (procurement/logistics/supplier management)
+- Wants to add: AI Q&A over SC data, supplier risk scoring, demand forecasting, disruption monitoring, agentic automation
+- Tech stack: likely Python-compatible, needs to integrate with existing APIs
+- Timeline: 90 days to ship v1 of AI layer
+- Using Claude API as primary LLM, LlamaIndex for RAG, Pinecone for vectors, LangGraph for agents
+
+Keep answers concise but complete. Use code snippets when relevant. Always connect back to supply chain.`;
+
+let chatHistory=[];
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  input.style.height='auto';
+  addMsg('user',msg);
+  document.getElementById('quickPills').style.display='none';
+  const loading=addMsg('ai','Thinking...','loading');
+  chatHistory.push({role:'user',content:msg});
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:1000,
+        system:SYSTEM,
+        messages:chatHistory
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'Sorry, I couldn\'t get a response. Check your network.';
+    loading.textContent=reply;
+    loading.classList.remove('loading');
+    chatHistory.push({role:'assistant',content:reply});
+  }catch(e){
+    loading.textContent='Network error. Make sure you\'re online.';
+    loading.classList.remove('loading');
+  }
+}
+
+function addMsg(role,text,cls=''){
+  const wrap=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg '+role+(cls?' '+cls:'');
+  if(role==='ai'){
+    const tag=document.createElement('div');
+    tag.className='ai-tag';
+    tag.textContent='SC·AI TUTOR';
+    div.appendChild(tag);
+    const p=document.createElement('div');
+    p.textContent=text;
+    div.appendChild(p);
+  } else {
+    div.textContent=text;
+  }
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+  return role==='ai'?div.querySelector('div:last-child'):div;
+}
+
+function askQuick(el){
+  document.getElementById('chat-input').value=el.textContent;
+  sendChat();
+}
+
+function chatKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderLearn();
+renderResources();
+renderGlossary();
+updateStats();
+</script>
+</body>
+</html>
